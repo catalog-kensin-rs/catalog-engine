@@ -100,9 +100,55 @@ function seedResiArtData_() {
     ['Gallery', '', '', '1pTU0wNfKN_rEjhEM30E2LWJnXYL-7RZ7', '', '', 'carousel', '']
   ]));
 
-  results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン', '1SY93X2cpJFdqevmXeixt8SUFq6q9bbjC'));
+  var logoFileId = '1SY93X2cpJFdqevmXeixt8SUFq6q9bbjC';
+  results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン', logoFileId));
+
+  // Web公開ページ（GitHub Pages＝匿名アクセス）から画像を表示するには、
+  // Driveの各画像フォルダ・ロゴファイルが「リンクを知っている全員が閲覧可」になっている必要がある。
+  // 未設定だとdriveFileIdToWebUrl_で作ったURLがGoogleのログイン画面にリダイレクトされ、
+  // 画像が壊れたアイコンになる（今回発覧した不具合の原因）。③実行のたびに強制的に揃える。
+  var imageFolderIds = [
+    '1sun3XCevGJQsbK87nX0Uyqqj29byYGDa', // P10_CONCEPT メインビジュアル
+    FEATURES_FOLDER_ID,
+    '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', // Sign
+    '1sz3CnIHjjdYRzQaNTQfBzQzvnT2vsORD', // Sign_Gallery
+    '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', // Table
+    '1lUvo0uN1m21dfCIcq-Kb-equpzR-lU14', // Table_Gallery
+    '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', // Floor_BeforeAfter
+    '1pTU0wNfKN_rEjhEM30E2LWJnXYL-7RZ7'  // Floor_Gallery
+  ];
+  var sharingNotes = imageFolderIds.map(ensureFolderPubliclyViewable_);
+  sharingNotes.push(ensureFilePubliclyViewable_(logoFileId));
+  var sharingFailures = sharingNotes.filter(function (n) { return n && !n.ok; });
+  results.push({
+    name: '画像の公開設定',
+    ok: sharingFailures.length === 0,
+    message: sharingFailures.length === 0
+      ? '全フォルダ・ロゴを「リンクを知っている全員が閲覧可」に設定しました'
+      : sharingFailures.map(function (n) { return n.id + '：' + n.message; }).join(' / ')
+  });
 
   return results;
+}
+
+/** Driveフォルダを「リンクを知っている全員が閲覧可」に設定する（既に設定済みでも安全に再実行可） */
+function ensureFolderPubliclyViewable_(folderId) {
+  try {
+    DriveApp.getFolderById(folderId).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return { id: folderId, ok: true };
+  } catch (e) {
+    return { id: folderId, ok: false, message: e.message };
+  }
+}
+
+/** Driveファイルを「リンクを知っている全員が閲覧可」に設定する（既に設定済みでも安全に再実行可） */
+function ensureFilePubliclyViewable_(fileId) {
+  try {
+    DriveApp.getFileById(fileId).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return { id: fileId, ok: true };
+  } catch (e) {
+    return { id: fileId, ok: false, message: e.message };
+  }
 }
 
 /** {項目名: 値} を「項目名：値」の改行区切りテキストに変換（specsテンプレートのbody用） */
