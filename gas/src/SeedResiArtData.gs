@@ -85,11 +85,11 @@ function seedResiArtData_() {
 
   results.push(seedContentSheet_(ss, 'P40_WORKS', [
     ['施工事例（床）', '', '店舗・住宅・ガレージの床施工事例（Before/After）',
-      '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '', '', '', ''],
+      '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '床施工事例', '', '', ''],
     ['レジンアート看板', '', 'フルオーダーで制作した看板施工事例',
-      '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '', '', '', ''],
+      '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '看板施工事例', '', '', ''],
     ['レジンアートテーブル', '', '世界に一つだけのアートテーブル施工事例',
-      '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', '', '', '', '']
+      '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', 'テーブル施工事例', '', '', '']
   ]));
 
   results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン'));
