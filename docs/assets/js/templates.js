@@ -50,6 +50,18 @@ function section(pageId, pageType, innerHtml, extraClass) {
   return '<section id="page-' + escapeHtml(pageId) + '" class="page-section page-type-' + escapeHtml(pageType) + (extraClass ? ' ' + extraClass : '') + '">' + innerHtml + '</section>';
 }
 
+/**
+ * セクション冒頭の見出し階層（英字ラベル→大見出し）を共通化する。
+ * 英字ラベルはpage_id（"features"等、既存データに含まれる識別子）をそのまま使う
+ * ＝新しいデータ項目を増やさずに済む。
+ */
+function sectionHeading_(page) {
+  return '<div class="section-heading reveal">' +
+    (page.page_id ? '<p class="section-eyebrow">' + escapeHtml(page.page_id) + '</p>' : '') +
+    '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' +
+    '</div>';
+}
+
 function imageTag(url, alt) {
   return '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(alt || '') + '" loading="lazy">';
 }
@@ -101,7 +113,7 @@ window.CATALOG_TEMPLATES = {
           '</div>'
         : '';
 
-      return '<div class="text-block">' +
+      return '<div class="text-block reveal">' +
         (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
         (item.subtitle ? '<p class="subtitle">' + escapeHtml(item.subtitle) + '</p>' : '') +
         mainHtml +
@@ -109,13 +121,13 @@ window.CATALOG_TEMPLATES = {
         carouselHtml +
         '</div>';
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + blocks);
+    return section(page.page_id, page.page_type, sectionHeading_(page) + blocks);
   },
 
   image_text: function (page) {
     var blocks = (page.items || []).map(function (item, i) {
       var reversed = (item.layout_type === 'reverse') || (i % 2 === 1);
-      return '<div class="image-text-row' + (reversed ? ' reversed' : '') + '">' +
+      return '<div class="image-text-row reveal' + (reversed ? ' reversed' : '') + '">' +
         '<div class="image-text-media">' + (item.images && item.images[0] ? imageTag(item.images[0], item.title) : '') + '</div>' +
         '<div class="image-text-content">' +
         (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
@@ -123,7 +135,7 @@ window.CATALOG_TEMPLATES = {
         (item.body ? '<p class="body">' + nl2br(item.body) + '</p>' : '') +
         '</div></div>';
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + blocks);
+    return section(page.page_id, page.page_type, sectionHeading_(page) + blocks);
   },
 
   features: function (page) {
@@ -135,7 +147,7 @@ window.CATALOG_TEMPLATES = {
         (item.body ? '<p class="body">' + nl2br(item.body) + '</p>' : '') +
         '</div>';
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2><div class="feature-grid">' + cards + '</div>');
+    return section(page.page_id, page.page_type, sectionHeading_(page) + '<div class="feature-grid reveal-stagger">' + cards + '</div>');
   },
 
   gallery: function (page) {
@@ -149,25 +161,27 @@ window.CATALOG_TEMPLATES = {
       var tiles = images.map(function (url) {
         return '<figure class="gallery-tile">' + imageTag(url, item.title) + '</figure>';
       }).join('');
-      var heading = item.title ? '<h3 class="gallery-group-title">' + escapeHtml(item.title) + '</h3>' : '';
-      var caption = item.caption ? '<p class="gallery-group-caption">' + escapeHtml(item.caption) + '</p>' : '';
-      var body = '<div class="gallery-' + layout + '">' + tiles + '</div>';
-      return '<div class="gallery-group">' + heading + caption + body + '</div>';
+      // タイトル・キャプションは写真の下にシンプルに添える（写真そのものを主役にする）
+      var caption = (item.title || item.caption)
+        ? '<p class="gallery-group-caption">' + [item.title, item.caption].filter(Boolean).map(escapeHtml).join('　') + '</p>'
+        : '';
+      var body = '<div class="gallery-' + layout + ' reveal-stagger">' + tiles + '</div>';
+      return '<div class="gallery-group">' + body + caption + '</div>';
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + groups);
+    return section(page.page_id, page.page_type, sectionHeading_(page) + groups);
   },
 
   before_after: function (page) {
     var rows = (page.items || []).map(function (item) {
       var before = item.images && item.images[0];
       var after = item.images && item.images[1];
-      return '<div class="before-after-row">' +
+      return '<div class="before-after-row reveal">' +
         '<div class="ba-col"><p class="ba-label">Before</p>' + (before ? imageTag(before, item.title) : '') + '</div>' +
         '<div class="ba-col"><p class="ba-label">After</p>' + (after ? imageTag(after, item.title) : '') + '</div>' +
         (item.title ? '<h3 class="ba-title">' + escapeHtml(item.title) + '</h3>' : '') +
         '</div>';
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + rows);
+    return section(page.page_id, page.page_type, sectionHeading_(page) + rows);
   },
 
   specs: function (page) {
@@ -184,7 +198,7 @@ window.CATALOG_TEMPLATES = {
       }
     });
 
-    var html = '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>';
+    var html = sectionHeading_(page);
 
     if (columns.length) {
       var rowKeys = [];
@@ -205,7 +219,7 @@ window.CATALOG_TEMPLATES = {
         return '<tr><th>' + escapeHtml(key) + '</th>' + cells + '</tr>';
       }).join('');
 
-      html += '<div class="specs-table-wrap" style="overflow-x:auto;">' +
+      html += '<div class="specs-table-wrap reveal" style="overflow-x:auto;">' +
         '<table class="specs-table specs-compare-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>' +
         '</div>';
     }
@@ -221,7 +235,7 @@ window.CATALOG_TEMPLATES = {
 
   company: function (page, catalog, company) {
     var c = company || page.company;
-    if (!c) return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2><p>会社情報が設定されていません。</p>');
+    if (!c) return section(page.page_id, page.page_type, sectionHeading_(page) + '<p>会社情報が設定されていません。</p>');
     var rows = [
       ['所在地', (c.postal_code ? '〒' + c.postal_code + ' ' : '') + (c.address || '')],
       ['業務内容', c.business],
@@ -240,8 +254,8 @@ window.CATALOG_TEMPLATES = {
       .map(function (r) { return '<tr><th>' + escapeHtml(r[0]) + '</th><td>' + (r[0] === 'WEB' || r[0] === 'Instagram' ? r[1] : nl2br(r[1])) + '</td></tr>'; })
       .join('');
     return section(page.page_id, page.page_type,
-      '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' +
-      '<div class="company-block">' +
+      sectionHeading_(page) +
+      '<div class="company-block reveal">' +
       (c.logo ? '<div class="company-logo">' + imageTag(c.logo, c.name) + '</div>' : '') +
       '<h3 class="company-name">' + escapeHtml(c.name) + '</h3>' +
       '<table class="specs-table"><tbody>' + rows + '</tbody></table>' +
@@ -256,13 +270,13 @@ window.CATALOG_TEMPLATES = {
         if (id) embed = '<div class="video-embed"><iframe src="https://www.youtube.com/embed/' + escapeHtml(id) + '" allowfullscreen loading="lazy"></iframe></div>';
       }
       if (!embed && item.link) embed = '<p class="video-link"><a href="' + escapeHtml(item.link) + '" target="_blank" rel="noopener">' + escapeHtml(item.link) + '</a></p>';
-      return '<div class="video-block">' +
+      return '<div class="video-block reveal">' +
         (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
         embed +
         (item.body ? '<p class="body">' + nl2br(item.body) + '</p>' : '') +
         '</div>';
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + blocks);
+    return section(page.page_id, page.page_type, sectionHeading_(page) + blocks);
   },
 
   contact: function (page, catalog, company) {
@@ -275,18 +289,64 @@ window.CATALOG_TEMPLATES = {
       return (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
         (item.body ? '<p class="body">' + nl2br(item.body) + '</p>' : '');
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2><div class="contact-block">' + blocks + contactLines.join('') + '</div>');
+    return section(page.page_id, page.page_type, sectionHeading_(page) + '<div class="contact-block reveal">' + blocks + contactLines.join('') + '</div>');
   },
 
   custom: function (page) {
     var blocks = (page.items || []).map(function (item) {
-      return '<div class="custom-block">' +
+      return '<div class="custom-block reveal">' +
         (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
         (item.subtitle ? '<p class="subtitle">' + escapeHtml(item.subtitle) + '</p>' : '') +
         (item.body ? '<p class="body">' + nl2br(item.body) + '</p>' : '') +
         (item.images && item.images.length ? '<div class="custom-images">' + item.images.map(function (u) { return imageTag(u, item.title); }).join('') + '</div>' : '') +
         '</div>';
     }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + blocks);
+    return section(page.page_id, page.page_type, sectionHeading_(page) + blocks);
   }
 };
+
+/**
+ * UI演出（ヘッダーのスクロール状態切り替え、スクロール出現アニメーション）。
+ * データ取得・描画のオーケストレーションはapp.js側の責務のままなので、
+ * ここでは「#catalog-mainへ内容が挿入されたこと」をMutationObserverで検知するだけにして
+ * app.jsには手を加えない。prefers-reduced-motionが有効な場合は演出を行わない
+ * （CSS側でも.reveal/.reveal-staggerの初期非表示自体を無効化している）。
+ */
+(function () {
+  if (typeof window === 'undefined') return;
+
+  var headerEl = document.getElementById('catalog-header');
+  if (headerEl) {
+    var updateHeaderState = function () {
+      headerEl.classList.toggle('is-scrolled', window.scrollY > 60);
+    };
+    updateHeaderState();
+    window.addEventListener('scroll', updateHeaderState, { passive: true });
+  }
+
+  if (typeof IntersectionObserver === 'undefined') return;
+  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducedMotion) return;
+
+  var mainEl = document.getElementById('catalog-main');
+  if (!mainEl) return;
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+
+  var mo = new MutationObserver(function () {
+    mainEl.querySelectorAll('.reveal, .reveal-stagger').forEach(function (el) {
+      if (!el.dataset.revealObserved) {
+        el.dataset.revealObserved = '1';
+        io.observe(el);
+      }
+    });
+  });
+  mo.observe(mainEl, { childList: true, subtree: true });
+})();
