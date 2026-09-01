@@ -130,7 +130,7 @@ function readContentRows_(sheet) {
   var items = [];
   for (var i = 1; i < data.length; i++) {
     var row = data[i];
-    if (!row[0] && !row[1] && !row[2]) continue; // 完全空行はスキップ
+    if (!row[0] && !row[1] && !row[2] && !row[3]) continue; // 完全空行はスキップ（画像フォルダIDのみの行は残す＝別ギャラリー行用）
     var imageFolderId = row[3];
     items.push({
       title: row[0] || '',
