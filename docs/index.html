@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カタログ</title>
+<link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+  <div id="app" class="catalog-app">
+    <div id="loading" class="state-message">読み込み中...</div>
+    <div id="error" class="state-message state-error" hidden></div>
+    <header id="catalog-header" class="catalog-header" hidden>
+      <div class="catalog-header-inner">
+        <img id="header-logo" class="header-logo" alt="" hidden>
+        <div class="header-text">
+          <h1 id="catalog-name"></h1>
+        </div>
+      </div>
+      <nav id="catalog-nav" class="catalog-nav"></nav>
+    </header>
+    <main id="catalog-main" class="catalog-main"></main>
+    <footer id="catalog-footer" class="catalog-footer" hidden></footer>
+  </div>
+
+  <script src="./assets/js/config.js"></script>
+  <script src="./assets/js/templates.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>
