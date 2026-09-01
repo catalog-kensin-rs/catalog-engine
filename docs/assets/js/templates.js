@@ -19,6 +19,33 @@ function nl2br(str) {
   return escapeHtml(str).replace(/\n/g, '<br>');
 }
 
+/**
+ * specsテンプレート用：本文の「項目：値」改行区切りテキストを{項目: 値}へパースする。
+ * 「：」を優先区切りとする（値側に半角「:」を含む場合があるため、行内で最後に
+ * 現れる全角「：」を区切り位置とする。全角「：」が無ければ半角「:」にフォールバック）。
+ * 区切りが1つも見つからなければnullを返す（＝備考等の非表形式行として扱う）。
+ */
+function parseSpecsBody_(body) {
+  if (!body) return null;
+  var lines = String(body).split('\n');
+  var props = {};
+  var found = false;
+  lines.forEach(function (line) {
+    if (!line) return;
+    var idx = line.lastIndexOf('：');
+    if (idx === -1) idx = line.indexOf(':');
+    if (idx > 0) {
+      var key = line.slice(0, idx).trim();
+      var value = line.slice(idx + 1).trim();
+      if (key) {
+        props[key] = value;
+        found = true;
+      }
+    }
+  });
+  return found ? props : null;
+}
+
 function section(pageId, pageType, innerHtml, extraClass) {
   return '<section id="page-' + escapeHtml(pageId) + '" class="page-section page-type-' + escapeHtml(pageType) + (extraClass ? ' ' + extraClass : '') + '">' + innerHtml + '</section>';
 }
@@ -105,10 +132,52 @@ window.CATALOG_TEMPLATES = {
   },
 
   specs: function (page) {
-    var rows = (page.items || []).map(function (item) {
-      return '<tr><th>' + escapeHtml(item.title) + '</th><td>' + nl2br(item.body) + '</td></tr>';
-    }).join('');
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2><table class="specs-table"><tbody>' + rows + '</tbody></table>');
+    // 本文が「項目：値」の改行区切りで格納された行を種類ごとの列とし、項目名を行とする横並び比較表に変換する。
+    // パースできない行（備考など）は表に含めず、表の下に注記として表示する。
+    var columns = [];
+    var notes = [];
+    (page.items || []).forEach(function (item) {
+      var props = parseSpecsBody_(item.body);
+      if (props) {
+        columns.push({ title: item.title, props: props });
+      } else if (item.title || item.body) {
+        notes.push(item);
+      }
+    });
+
+    var html = '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>';
+
+    if (columns.length) {
+      var rowKeys = [];
+      columns.forEach(function (col) {
+        Object.keys(col.props).forEach(function (key) {
+          if (rowKeys.indexOf(key) === -1) rowKeys.push(key);
+        });
+      });
+
+      var thead = '<tr><th></th>' + columns.map(function (c) {
+        return '<th>' + escapeHtml(c.title) + '</th>';
+      }).join('') + '</tr>';
+
+      var tbody = rowKeys.map(function (key) {
+        var cells = columns.map(function (c) {
+          return '<td>' + escapeHtml(c.props[key] || '') + '</td>';
+        }).join('');
+        return '<tr><th>' + escapeHtml(key) + '</th>' + cells + '</tr>';
+      }).join('');
+
+      html += '<div class="specs-table-wrap" style="overflow-x:auto;">' +
+        '<table class="specs-table specs-compare-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>' +
+        '</div>';
+    }
+
+    if (notes.length) {
+      html += notes.map(function (n) {
+        return '<p class="specs-note">' + (n.title ? escapeHtml(n.title) + '：' : '') + nl2br(n.body) + '</p>';
+      }).join('');
+    }
+
+    return section(page.page_id, page.page_type, html);
   },
 
   company: function (page, catalog, company) {
