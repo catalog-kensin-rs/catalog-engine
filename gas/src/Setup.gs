@@ -126,11 +126,50 @@ function setupSettingsSheet_(ss) {
 }
 
 function setupCatalogSheet_(ss) {
-  var sampleRow = [INITIAL_CATALOG_ID, false, 'Resi Art', 'resiart', 'default', new Date()];
-  var result = ensureTabularSheet_(ss, SHEET_NAMES.CATALOG, CATALOG_HEADERS, [sampleRow], [140, 80, 200, 140, 140, 120]);
-  var sheet = ss.getSheetByName(SHEET_NAMES.CATALOG);
-  if (sheet) applyCheckbox_(sheet, 2, 500); // 公開列（今後の追加行にも適用）
+  var name = SHEET_NAMES.CATALOG;
+  var existing = ss.getSheetByName(name);
+  // 公開URL列（G列）追加前の旧ヘッダー。既存シートの後方互換マイグレーション判定に使う。
+  var oldHeaders = ['catalog_id', '公開', 'カタログ名', 'slug', 'テーマ', '更新日'];
+
+  if (existing && existing.getLastRow() > 1 && !headersMatch_(existing, CATALOG_HEADERS) && headersMatch_(existing, oldHeaders)) {
+    addCatalogPublicUrlColumn_(existing);
+    fillCatalogPublicUrlFormulas_(existing);
+    applyCheckbox_(existing, 2, 500);
+    return { name: name, ok: true, message: 'G列「公開URL」を追加し、既存行に数式を反映しました' };
+  }
+
+  var sampleRow = [INITIAL_CATALOG_ID, false, 'Resi Art', 'resiart', 'default', new Date(), catalogPublicUrlFormula_(2)];
+  var result = ensureTabularSheet_(ss, name, CATALOG_HEADERS, [sampleRow], [140, 80, 200, 140, 140, 120, 320]);
+  var sheet = ss.getSheetByName(name);
+  if (sheet) {
+    applyCheckbox_(sheet, 2, 500); // 公開列（今後の追加行にも適用）
+    if (result.ok) fillCatalogPublicUrlFormulas_(sheet); // 手動追加行等、数式が未設定の行があれば補完
+  }
   return result;
+}
+
+/** カタログ管理G列（公開URL）に入れる数式文字列を生成 */
+function catalogPublicUrlFormula_(row) {
+  return '="https://catalog-kensin-rs.github.io/catalog-engine/?catalog="&A' + row + '&"&company=numan"';
+}
+
+/** カタログ管理シートの、catalog_id入力済みの全行にG列（公開URL）の数式を設定する（未入力行はスキップ） */
+function fillCatalogPublicUrlFormulas_(sheet) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  var ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+  for (var i = 0; i < ids.length; i++) {
+    if (ids[i][0]) {
+      var row = i + 2;
+      sheet.getRange(row, 7).setFormula(catalogPublicUrlFormula_(row));
+    }
+  }
+}
+
+/** 旧6列ヘッダーのカタログ管理シートへ、G列「公開URL」ヘッダーを追加する（列構成の後方互換マイグレーション） */
+function addCatalogPublicUrlColumn_(sheet) {
+  sheet.getRange(1, 7).setValue('公開URL').setFontWeight('bold').setBackground('#f0f0f0');
+  sheet.setColumnWidth(7, 320);
 }
 
 function setupPageSheet_(ss) {

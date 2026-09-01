@@ -22,7 +22,7 @@ var SETTINGS_ITEMS = [
 var SCRIPT_PROP_LINE_TOKEN = 'LINE_ACCESS_TOKEN';
 var TOKEN_MASK = '●●●保存済み';
 
-var CATALOG_HEADERS = ['catalog_id', '公開', 'カタログ名', 'slug', 'テーマ', '更新日'];
+var CATALOG_HEADERS = ['catalog_id', '公開', 'カタログ名', 'slug', 'テーマ', '更新日', '公開URL'];
 var PAGE_HEADERS = ['catalog_id', 'order', 'page_id', 'ページ名', 'sheet_name', 'page_type', '公開'];
 var COMPANY_HEADERS = ['company_id', '会社名', '郵便番号', '住所', 'TEL', 'FAX', 'MAIL', 'WEB', 'Instagram', 'LINE', '代表者', '担当者', '営業時間', '対応エリア', '問い合わせ先', 'ロゴ', '業務内容'];
 var PAGE_CONTENT_HEADERS = ['タイトル', 'サブタイトル', '本文', '画像フォルダID', 'キャプション', 'リンク', 'レイアウトタイプ', '背景設定'];
