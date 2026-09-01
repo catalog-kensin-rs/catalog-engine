@@ -1,16 +1,19 @@
 :root {
-  --color-bg: #ffffff;
-  --color-text: #222222;
-  --color-muted: #6b6b6b;
-  --color-accent: #1f4d3d;
-  --color-border: #e4e4e4;
-  --color-surface: #f7f7f5;
+  --color-bg: #0d0d0f;
+  --color-text: #f2efe9;
+  --color-muted: #a8a29b;
+  --color-accent: #c9974a;
+  --color-accent-soft: rgba(201, 151, 74, 0.35);
+  --color-border: #2a2a2e;
+  --color-surface: #17171a;
   --font-base: 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', system-ui, sans-serif;
+  --font-display: 'Playfair Display', 'Times New Roman', serif;
+  --font-jp-label: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
   --max-width: 1080px;
 }
 
 [data-theme="default"] {
-  --color-accent: #1f4d3d;
+  --color-accent: #c9974a;
 }
 
 * { box-sizing: border-box; }
@@ -61,6 +64,7 @@ img { max-width: 100%; display: block; }
   overflow-x: auto;
 }
 .catalog-nav a {
+  font-family: var(--font-jp-label);
   color: var(--color-muted);
   text-decoration: none;
   font-size: 0.9rem;
@@ -72,7 +76,9 @@ img { max-width: 100%; display: block; }
 
 .page-section { padding: 3rem 0; border-bottom: 1px solid var(--color-border); }
 .page-section:last-child { border-bottom: none; }
-.page-title { font-size: 1.5rem; margin: 0 0 1.5rem; }
+.page-title { font-family: var(--font-display); font-size: 1.5rem; margin: 0 0 1.5rem; }
+
+h1, h2, h3 { font-family: var(--font-display); }
 
 /* hero */
 .hero-block {
@@ -89,10 +95,11 @@ img { max-width: 100%; display: block; }
 .hero-overlay {
   width: 100%;
   padding: 2.5rem 1.5rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.65), rgba(0,0,0,0));
+  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.1));
 }
-.hero-eyebrow { text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; opacity: 0.85; margin: 0 0 0.5rem; }
-.hero-title { font-size: clamp(1.6rem, 4vw, 2.6rem); margin: 0 0 0.5rem; }
+.hero-eyebrow { font-family: var(--font-jp-label); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; opacity: 0.85; margin: 0 0 0.5rem; }
+.hero-logo { max-width: 320px; width: 60%; margin: 0 0 0.75rem; }
+.hero-title { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.6rem); margin: 0 0 0.5rem; }
 .hero-subtitle { font-size: 1.1rem; margin: 0 0 0.75rem; opacity: 0.9; }
 .hero-body { max-width: 40rem; opacity: 0.9; }
 

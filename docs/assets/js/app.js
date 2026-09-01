@@ -22,14 +22,16 @@
   function renderHeader(data) {
     document.body.dataset.theme = data.catalog.theme || 'default';
     var headerEl = document.getElementById('catalog-header');
-    document.getElementById('catalog-name').textContent = data.catalog.name || '';
+    var nameEl = document.getElementById('catalog-name');
+    nameEl.textContent = data.catalog.name || '';
     document.title = data.catalog.name || 'カタログ';
 
     var logoEl = document.getElementById('header-logo');
     if (data.company && data.company.logo) {
       logoEl.src = data.company.logo;
-      logoEl.alt = data.company.name || '';
+      logoEl.alt = data.company.name || data.catalog.name || '';
       show(logoEl);
+      hide(nameEl); // ロゴ画像がある場合はテキストの代わりにロゴを表示する
     }
 
     var navEl = document.getElementById('catalog-nav');

@@ -92,7 +92,7 @@ function seedResiArtData_() {
       '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', 'テーブル施工事例', '', '', '']
   ]));
 
-  results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン'));
+  results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン', '1SY93X2cpJFdqevmXeixt8SUFq6q9bbjC'));
 
   return results;
 }
@@ -123,19 +123,21 @@ function seedContentSheet_(ss, sheetName, rows) {
   return { name: sheetName, ok: true, message: rows.length + '件を投入しました' };
 }
 
-/** 会社マスターの既存company_id行へ会社名・郵便番号・住所・業務内容を更新（TEL等の他列は変更しない） */
-function seedCompanyRow_(ss, companyId, name, postalCode, address, business) {
+/** 会社マスターの既存company_id行へ会社名・郵便番号・住所・業務内容・ロゴを更新（TEL等の他列は変更しない） */
+function seedCompanyRow_(ss, companyId, name, postalCode, address, business, logoFileId) {
   var sheetName = SHEET_NAMES.COMPANY;
   var sheet = ss.getSheetByName(sheetName);
   if (!sheet) return { name: sheetName, ok: false, message: 'シートが存在しません' };
   ensureCompanyBusinessColumn_(sheet);
   var data = sheet.getDataRange().getValues();
   var businessCol = COMPANY_HEADERS.indexOf('業務内容') + 1;
+  var logoCol = COMPANY_HEADERS.indexOf('ロゴ') + 1;
   for (var i = 1; i < data.length; i++) {
     if (data[i][0] === companyId) {
       sheet.getRange(i + 1, 2, 1, 3).setValues([[name, postalCode, address]]);
       sheet.getRange(i + 1, businessCol, 1, 1).setValue(business);
-      return { name: sheetName, ok: true, message: 'company_id=' + companyId + ' の行（会社名・郵便番号・住所・業務内容）を更新しました' };
+      if (logoFileId) sheet.getRange(i + 1, logoCol, 1, 1).setValue(logoFileId);
+      return { name: sheetName, ok: true, message: 'company_id=' + companyId + ' の行（会社名・郵便番号・住所・業務内容・ロゴ）を更新しました' };
     }
   }
   return { name: sheetName, ok: false, message: 'company_id=' + companyId + ' の行が見つかりません。「①初期設定」で会社マスターにサンプル行が作成されているか確認してください。' };
