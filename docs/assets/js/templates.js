@@ -116,6 +116,7 @@ window.CATALOG_TEMPLATES = {
     if (!c) return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2><p>会社情報が設定されていません。</p>');
     var rows = [
       ['所在地', (c.postal_code ? '〒' + c.postal_code + ' ' : '') + (c.address || '')],
+      ['業務内容', c.business],
       ['TEL', c.tel],
       ['FAX', c.fax],
       ['MAIL', c.mail],

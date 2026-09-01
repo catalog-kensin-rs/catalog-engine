@@ -169,7 +169,8 @@ function findCompany_(ss, companyId) {
         business_hours: row[12],
         service_area: row[13],
         inquiry: row[14],
-        logo: row[15] ? driveFileIdToWebUrl_(row[15], 400) : ''
+        logo: row[15] ? driveFileIdToWebUrl_(row[15], 400) : '',
+        business: row[16] || ''
       };
     }
   }

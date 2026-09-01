@@ -165,8 +165,8 @@ function setupPageSheet_(ss) {
 }
 
 function setupCompanySheet_(ss) {
-  var sampleRow = ['numan', '（会社名を入力）', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
-  var widths = [110, 160, 100, 260, 130, 130, 180, 200, 160, 160, 100, 100, 160, 160, 200, 160];
+  var sampleRow = ['numan', '（会社名を入力）', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+  var widths = [110, 160, 100, 260, 130, 130, 180, 200, 160, 160, 100, 100, 160, 160, 200, 160, 200];
   return ensureTabularSheet_(ss, SHEET_NAMES.COMPANY, COMPANY_HEADERS, [sampleRow], widths);
 }
 
