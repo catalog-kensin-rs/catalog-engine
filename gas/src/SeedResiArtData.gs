@@ -85,7 +85,7 @@ function seedResiArtData_() {
 
   results.push(seedContentSheet_(ss, 'P40_WORKS', [
     ['施工事例（床）', '', '店舗・住宅・ガレージの床施工事例（Before/After）',
-      '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '床施工事例', '', '', ''],
+      '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '床施工事例', '', 'grid', ''],
     ['レジンアート看板', '', 'フルオーダーで制作した看板施工事例',
       '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '看板施工事例', '', '', ''],
     ['レジンアートテーブル', '', '世界に一つだけのアートテーブル施工事例',
