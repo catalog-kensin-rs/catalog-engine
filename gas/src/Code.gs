@@ -48,6 +48,7 @@ function onOpen() {
     .createMenu('⚙️ カタログ管理')
     .addItem('① 初期設定', 'runInitialSetup')
     .addItem('② 設定チェック', 'runSettingsCheck')
+    .addItem('③ Resi Art データ投入（Phase3）', 'runSeedResiArtData')
     .addToUi();
 }
 
