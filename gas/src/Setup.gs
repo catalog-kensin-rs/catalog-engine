@@ -59,6 +59,11 @@ function applyDropdown_(sheet, colIndex, values, numRows) {
   sheet.getRange(2, colIndex, numRows, 1).setDataValidation(rule);
 }
 
+function applyCheckbox_(sheet, colIndex, numRows) {
+  var rule = SpreadsheetApp.newDataValidation().requireCheckbox().build();
+  sheet.getRange(2, colIndex, numRows, 1).setDataValidation(rule);
+}
+
 /**
  * 汎用：表形式シートの安全な初期化。
  * 既存シートがあり列構成が想定と異なり、かつデータ行がある場合は上書きせず停止する。
@@ -122,7 +127,10 @@ function setupSettingsSheet_(ss) {
 
 function setupCatalogSheet_(ss) {
   var sampleRow = [INITIAL_CATALOG_ID, false, 'Resi Art', 'resiart', 'default', new Date()];
-  return ensureTabularSheet_(ss, SHEET_NAMES.CATALOG, CATALOG_HEADERS, [sampleRow], [140, 80, 200, 140, 140, 120]);
+  var result = ensureTabularSheet_(ss, SHEET_NAMES.CATALOG, CATALOG_HEADERS, [sampleRow], [140, 80, 200, 140, 140, 120]);
+  var sheet = ss.getSheetByName(SHEET_NAMES.CATALOG);
+  if (sheet) applyCheckbox_(sheet, 2, 500); // 公開列（今後の追加行にも適用）
+  return result;
 }
 
 function setupPageSheet_(ss) {
@@ -146,8 +154,9 @@ function setupPageSheet_(ss) {
       return [INITIAL_CATALOG_ID, p[0], p[1], p[2], p[3], p[4], p[5]];
     });
     sheet.getRange(2, 1, rows.length, PAGE_HEADERS.length).setValues(rows);
-    applyDropdown_(sheet, 6, PAGE_TYPES, rows.length); // page_type列
   }
+  applyDropdown_(sheet, 6, PAGE_TYPES, 500); // page_type列（今後の追加行にも適用）
+  applyCheckbox_(sheet, 7, 500); // 公開列
 
   var widths = [100, 70, 110, 160, 160, 110, 80];
   for (var i = 0; i < widths.length; i++) sheet.setColumnWidth(i + 1, widths[i]);
