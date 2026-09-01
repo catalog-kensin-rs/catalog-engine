@@ -108,14 +108,22 @@ window.CATALOG_TEMPLATES = {
   },
 
   gallery: function (page) {
-    var tiles = [];
-    (page.items || []).forEach(function (item) {
-      (item.images || []).forEach(function (url) {
-        tiles.push('<figure class="gallery-tile">' + imageTag(url, item.title) +
-          (item.caption ? '<figcaption>' + escapeHtml(item.caption) + '</figcaption>' : '') + '</figure>');
-      });
-    });
-    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2><div class="gallery-grid">' + tiles.join('') + '</div>');
+    // 1行（1画像フォルダ）を1グループとして描画する。行数・画像枚数はどちらも可変を前提とする
+    // （LINE経由で今後増えていく想定）。レイアウトタイプ列でgrid/carouselを指定でき、
+    // 未指定または不明な値はcarousel扱いにする。
+    var groups = (page.items || []).map(function (item) {
+      var images = item.images || [];
+      if (!images.length) return '';
+      var layout = String(item.layout_type || '').trim().toLowerCase() === 'grid' ? 'grid' : 'carousel';
+      var tiles = images.map(function (url) {
+        return '<figure class="gallery-tile">' + imageTag(url, item.title) + '</figure>';
+      }).join('');
+      var heading = item.title ? '<h3 class="gallery-group-title">' + escapeHtml(item.title) + '</h3>' : '';
+      var caption = item.caption ? '<p class="gallery-group-caption">' + escapeHtml(item.caption) + '</p>' : '';
+      var body = '<div class="gallery-' + layout + '">' + tiles + '</div>';
+      return '<div class="gallery-group">' + heading + caption + body + '</div>';
+    }).join('');
+    return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + groups);
   },
 
   before_after: function (page) {
