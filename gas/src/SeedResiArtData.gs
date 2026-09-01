@@ -131,23 +131,33 @@ function seedResiArtData_() {
   return results;
 }
 
-/** Driveフォルダを「リンクを知っている全員が閲覧可」に設定する（既に設定済みでも安全に再実行可） */
+/** Driveフォルダを「リンクを知っている全員が閲覧可」に設定する（既に十分な公開設定なら何もしない） */
 function ensureFolderPubliclyViewable_(folderId) {
-  try {
-    DriveApp.getFolderById(folderId).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return { id: folderId, ok: true };
-  } catch (e) {
-    return { id: folderId, ok: false, message: e.message };
-  }
+  return ensurePubliclyViewable_(folderId, function () { return DriveApp.getFolderById(folderId); });
 }
 
-/** Driveファイルを「リンクを知っている全員が閲覧可」に設定する（既に設定済みでも安全に再実行可） */
+/** Driveファイルを「リンクを知っている全員が閲覧可」に設定する（既に十分な公開設定なら何もしない） */
 function ensureFilePubliclyViewable_(fileId) {
+  return ensurePubliclyViewable_(fileId, function () { return DriveApp.getFileById(fileId); });
+}
+
+/**
+ * すでに「リンクを知っている全員（閲覧または編集）」以上の公開設定になっている場合は
+ * setSharing()を呼ばない。すでにANYONE_WITH_LINK(Writer)の項目に対してVIEWへ変更しようとすると
+ * アカウント側の設定によっては「アクセスが拒否されました」になるケースがあるため、
+ * 既に目的を満たしている（＝匿名で閲覧できる）場合は何もしないことでこれを避ける。
+ */
+function ensurePubliclyViewable_(id, getItem) {
   try {
-    DriveApp.getFileById(fileId).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return { id: fileId, ok: true };
+    var item = getItem();
+    var access = item.getSharingAccess();
+    if (access === DriveApp.Access.ANYONE || access === DriveApp.Access.ANYONE_WITH_LINK) {
+      return { id: id, ok: true, message: '既に公開設定済み' };
+    }
+    item.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return { id: id, ok: true, message: '公開設定にしました' };
   } catch (e) {
-    return { id: fileId, ok: false, message: e.message };
+    return { id: id, ok: false, message: e.message };
   }
 }
 
