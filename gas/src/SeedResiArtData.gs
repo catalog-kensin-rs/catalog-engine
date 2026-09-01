@@ -53,10 +53,10 @@ function seedResiArtData_() {
       '', '', '', '', ''],
     ['Resi Art Sign（レジアート看板）', '',
       'レジンで創る唯一無二の看板。フルオーダーでサロン・オフィス等の空間に合わせて制作',
-      '', '', '', '', ''],
+      '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '', '', '', ''],
     ['Resi Art Table（レジアートテーブル）', '',
       '世界に一つだけの、自然が描くアートテーブル',
-      '', '', '', '', '']
+      '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', '', '', '', '']
   ]));
 
   results.push(seedContentSheet_(ss, 'P50_TECHNICAL', [

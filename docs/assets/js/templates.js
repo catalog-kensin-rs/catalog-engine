@@ -71,11 +71,37 @@ window.CATALOG_TEMPLATES = {
   },
 
   text: function (page) {
+    // 画像フォルダの先頭2枚をメイン写真として横並び表示し、3枚目以降は
+    // gallery側と同じ横スクロールカルーセル（.gallery-carousel/.gallery-tile）で表示する。
+    // 画像枚数は可変（今後Drive側に追加されていく想定）なので枚数固定にしない。
+    // CSSファイルには手を加えない指示のため、レイアウトはインラインスタイルで対応する。
     var blocks = (page.items || []).map(function (item) {
+      var images = item.images || [];
+      var mainImages = images.slice(0, 2);
+      var restImages = images.slice(2);
+
+      var mainHtml = mainImages.length
+        ? '<div style="display:flex;flex-wrap:wrap;gap:1rem;margin:0.75rem 0;">' +
+          mainImages.map(function (url) {
+            return '<div style="flex:1 1 220px;min-width:0;">' + imageTag(url, item.title) + '</div>';
+          }).join('') +
+          '</div>'
+        : '';
+
+      var carouselHtml = restImages.length
+        ? '<div class="gallery-carousel">' +
+          restImages.map(function (url) {
+            return '<figure class="gallery-tile">' + imageTag(url, item.title) + '</figure>';
+          }).join('') +
+          '</div>'
+        : '';
+
       return '<div class="text-block">' +
         (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
         (item.subtitle ? '<p class="subtitle">' + escapeHtml(item.subtitle) + '</p>' : '') +
+        mainHtml +
         (item.body ? '<p class="body">' + nl2br(item.body) + '</p>' : '') +
+        carouselHtml +
         '</div>';
     }).join('');
     return section(page.page_id, page.page_type, '<h2 class="page-title">' + escapeHtml(page.page_name) + '</h2>' + blocks);
