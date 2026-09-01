@@ -1,9 +1,8 @@
 /**
  * 「③ Resi Art データ投入（Phase3）」
- * P10_CONCEPT / P20_FEATURES / P30_SERVICE / P50_TECHNICAL と
+ * P10_CONCEPT / P20_FEATURES / P30_SERVICE / P40_WORKS / P50_TECHNICAL と
  * 会社マスター（numan）へ実データを投入する。
  * 列構成が想定と異なる場合は書き込まず警告する（安全策）。
- * P40_WORKS（施工事例画像）は画像未確定のため対象外。
  */
 
 function runSeedResiArtData() {
@@ -11,7 +10,6 @@ function runSeedResiArtData() {
   var summary = results.map(function (r) {
     return (r.ok ? '✅ ' : '⚠️ ') + r.name + '：' + r.message;
   }).join('\n');
-  summary += '\n\n※ P40_WORKS（施工事例画像）は、画像が未確定のため今回は投入していません。';
   SpreadsheetApp.getUi().alert('Resi Art データ投入 結果', summary, SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
@@ -31,7 +29,7 @@ function seedResiArtData_() {
   results.push(seedContentSheet_(ss, 'P10_CONCEPT', [
     ['Resi Art', '床が変われば、空間が変わる。',
       '職人の手仕事が生み出す、世界に一つだけのオーダーメイドフロア。国内外で高い評価を受けるレジンアートで、空間そのものの価値を変えます。',
-      '', '', '', 'full', '']
+      '1sun3XCevGJQsbK87nX0Uyqqj29byYGDa', '', '', 'full', '']
   ]));
 
   results.push(seedContentSheet_(ss, 'P20_FEATURES', [
@@ -83,6 +81,15 @@ function seedResiArtData_() {
       圧縮強さ: '178MPa', 引張強さ: '40.3MPa', 曲げ強さ: '50.7MPa', シャルピー衝撃値: '9.96KJ/m2', 最大硬度: '86（シュアD）'
     }), '', '', '', '', ''],
     ['備考', '', 'パンフレット記載の実測値（2026年1月時点データ）', '', '', '', '', '']
+  ]));
+
+  results.push(seedContentSheet_(ss, 'P40_WORKS', [
+    ['施工事例（床）', '', '店舗・住宅・ガレージの床施工事例（Before/After）',
+      '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '', '', '', ''],
+    ['レジンアート看板', '', 'フルオーダーで制作した看板施工事例',
+      '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '', '', '', ''],
+    ['レジンアートテーブル', '', '世界に一つだけのアートテーブル施工事例',
+      '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', '', '', '', '']
   ]));
 
   results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン'));
