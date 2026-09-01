@@ -90,28 +90,43 @@ window.CATALOG_TEMPLATES = {
   text: function (page) {
     // 画像フォルダの先頭2枚をメイン写真として横並び表示し、3枚目以降は
     // gallery側と同じ横スクロールカルーセル（.gallery-carousel/.gallery-tile）で表示する。
+    // ただしレイアウトタイプ=carouselの行は「別ギャラリー行」として、
+    // 先頭2枚メイン分けをせず全画像を1本のカルーセルにする。
     // 画像枚数は可変（今後Drive側に追加されていく想定）なので枚数固定にしない。
     // CSSファイルには手を加えない指示のため、レイアウトはインラインスタイルで対応する。
     var blocks = (page.items || []).map(function (item) {
       var images = item.images || [];
-      var mainImages = images.slice(0, 2);
-      var restImages = images.slice(2);
+      var isGalleryRow = String(item.layout_type || '').trim().toLowerCase() === 'carousel';
 
-      var mainHtml = mainImages.length
-        ? '<div style="display:flex;flex-wrap:wrap;gap:1rem;margin:0.75rem 0;">' +
-          mainImages.map(function (url) {
-            return '<div style="flex:1 1 220px;min-width:0;">' + imageTag(url, item.title) + '</div>';
-          }).join('') +
-          '</div>'
-        : '';
+      var mainHtml = '';
+      var carouselHtml = '';
 
-      var carouselHtml = restImages.length
-        ? '<div class="gallery-carousel">' +
-          restImages.map(function (url) {
-            return '<figure class="gallery-tile">' + imageTag(url, item.title) + '</figure>';
-          }).join('') +
-          '</div>'
-        : '';
+      if (isGalleryRow) {
+        carouselHtml = images.length
+          ? '<div class="gallery-carousel">' +
+            images.map(function (url) {
+              return '<figure class="gallery-tile">' + imageTag(url, item.title) + '</figure>';
+            }).join('') +
+            '</div>'
+          : '';
+      } else {
+        var mainImages = images.slice(0, 2);
+        var restImages = images.slice(2);
+        mainHtml = mainImages.length
+          ? '<div style="display:flex;flex-wrap:wrap;gap:1rem;margin:0.75rem 0;">' +
+            mainImages.map(function (url) {
+              return '<div style="flex:1 1 220px;min-width:0;">' + imageTag(url, item.title) + '</div>';
+            }).join('') +
+            '</div>'
+          : '';
+        carouselHtml = restImages.length
+          ? '<div class="gallery-carousel">' +
+            restImages.map(function (url) {
+              return '<figure class="gallery-tile">' + imageTag(url, item.title) + '</figure>';
+            }).join('') +
+            '</div>'
+          : '';
+      }
 
       return '<div class="text-block reveal">' +
         (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
@@ -139,9 +154,13 @@ window.CATALOG_TEMPLATES = {
   },
 
   features: function (page) {
-    var cards = (page.items || []).map(function (item) {
+    // 4項目が同じ画像フォルダを共有している場合（ft.1〜ft.4のような連番運用）を想定し、
+    // 行のインデックスに対応する画像を1枚だけ割り当てる（フォルダの画像は常にファイル名昇順の配列）。
+    // 各行が別々のフォルダを持つ場合は、そのフォルダの1枚目（images[0]）が使われるので従来通り動く。
+    var cards = (page.items || []).map(function (item, i) {
+      var photo = (item.images || [])[i] || (item.images || [])[0];
       return '<div class="feature-card">' +
-        (item.images && item.images[0] ? '<div class="feature-media">' + imageTag(item.images[0], item.title) + '</div>' : '') +
+        (photo ? '<div class="feature-media">' + imageTag(photo, item.title) + '</div>' : '') +
         (item.title ? '<h3>' + escapeHtml(item.title) + '</h3>' : '') +
         (item.subtitle ? '<p class="subtitle">' + escapeHtml(item.subtitle) + '</p>' : '') +
         (item.body ? '<p class="body">' + nl2br(item.body) + '</p>' : '') +
@@ -349,4 +368,55 @@ window.CATALOG_TEMPLATES = {
     });
   });
   mo.observe(mainEl, { childList: true, subtree: true });
+})();
+
+/**
+ * ライトボックス（画像クリック／タップで拡大表示）。
+ * #catalog-main配下の画像すべてをクリック委譲で拾う。ただしヘッダー用途ではない
+ * hero内ロゴ・会社ロゴ（ブランド要素）は拡大対象から除外する。
+ * ピンチズームを妨げないよう、独自のズーム処理は行わずimgをcontainで大きく表示するのみ。
+ */
+(function () {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  var mainEl = document.getElementById('catalog-main');
+  if (!mainEl) return;
+
+  var overlay = document.createElement('div');
+  overlay.className = 'lightbox-overlay';
+  overlay.setAttribute('hidden', '');
+  overlay.innerHTML = '<button type="button" class="lightbox-close" aria-label="閉じる">&times;</button><img class="lightbox-image" alt="">';
+  document.body.appendChild(overlay);
+
+  var imgEl = overlay.querySelector('.lightbox-image');
+  var closeBtn = overlay.querySelector('.lightbox-close');
+
+  function openLightbox(src, alt) {
+    imgEl.src = src;
+    imgEl.alt = alt || '';
+    overlay.removeAttribute('hidden');
+    requestAnimationFrame(function () { overlay.classList.add('is-open'); });
+  }
+
+  function closeLightbox() {
+    overlay.classList.remove('is-open');
+    setTimeout(function () {
+      overlay.setAttribute('hidden', '');
+      imgEl.src = '';
+    }, 250);
+  }
+
+  mainEl.addEventListener('click', function (e) {
+    var img = e.target.closest('img');
+    if (!img) return;
+    if (img.classList.contains('hero-logo') || img.closest('.company-logo')) return;
+    openLightbox(img.src, img.alt);
+  });
+
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeLightbox();
+  });
+  closeBtn.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeLightbox();
+  });
 })();

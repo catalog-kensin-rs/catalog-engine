@@ -32,21 +32,28 @@ function seedResiArtData_() {
       '1sun3XCevGJQsbK87nX0Uyqqj29byYGDa', '', '', 'full', '']
   ]));
 
+  // 4項目とも同じFeaturesフォルダを参照する。フォルダ内は「01_◯◯.jpg」〜「04_◯◯.jpg」の
+  // 連番想定（ファイル名昇順で返るため、行の並び順＝連番の並び順になる。features()テンプレート側で
+  // 行インデックスに対応する画像を1枚ずつ割り当てる）。
+  var FEATURES_FOLDER_ID = '1S0rRlK_-umhZk3KaQ3bFtwJgknk3CxKW';
   results.push(seedContentSheet_(ss, 'P20_FEATURES', [
     ['優れた意匠性', '',
       '職人の手作業が描き出す、世界に一つだけのオーダーメイドフロア。豊富な手法とバリエーションにより、空間に合わせた唯一無二の美しさを表現します。',
-      '', '', '', '', ''],
+      FEATURES_FOLDER_ID, '', '', '', ''],
     ['迅速な施工', '',
       '最短2日で仕上げる迅速な施工体制。施工から約48時間で完全硬化し実用強度に達するため、工期の大幅な短縮に貢献します。',
-      '', '', '', '', ''],
+      FEATURES_FOLDER_ID, '', '', '', ''],
     ['優れたメンテナンス性', '',
       '継ぎ目のないシームレスな表面が水や汚れの浸透をシャットアウト。日々の簡単な拭き掃除だけで美しさを保てます。',
-      '', '', '', '', ''],
+      FEATURES_FOLDER_ID, '', '', '', ''],
     ['強靭な耐久性', '',
       '厳格な各種試験をクリアした高品質レジンを採用。事業所での乗り入れにも耐える高い表面強度で、長期間性能を維持します。',
-      '', '', '', '', '']
+      FEATURES_FOLDER_ID, '', '', '', '']
   ]));
 
+  // Sign／Tableは「メイン行（既存フォルダ）」＋「ギャラリー行（新規フォルダ、レイアウトタイプ=carousel）」の
+  // 2行構成にする（列追加はせず、既存のPAGE_CONTENT_HEADERSのまま）。
+  // レイアウトタイプ=carouselの行は、text()テンプレート側で全画像を1本のカルーセルとして描画する。
   results.push(seedContentSheet_(ss, 'P30_SERVICE', [
     ['Resi Art Floor（レジンアートフロア）', '',
       '店舗・住宅・ガレージなど空間の雰囲気を大きく変えるオーダーデザインのレジンフロア。床だけの一部リフォームから空間づくりまで対応。\n施工フロー：①ヒアリング→②デザイン提案→③施工→④お引き渡し',
@@ -54,9 +61,11 @@ function seedResiArtData_() {
     ['Resi Art Sign（レジアート看板）', '',
       'レジンで創る唯一無二の看板。フルオーダーでサロン・オフィス等の空間に合わせて制作',
       '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '', '', '', ''],
+    ['', '', '', '1sz3CnIHjjdYRzQaNTQfBzQzvnT2vsORD', '', '', 'carousel', ''],
     ['Resi Art Table（レジアートテーブル）', '',
       '世界に一つだけの、自然が描くアートテーブル',
-      '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', '', '', '', '']
+      '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', '', '', '', ''],
+    ['', '', '', '1lUvo0uN1m21dfCIcq-Kb-equpzR-lU14', '', '', 'carousel', '']
   ]));
 
   results.push(seedContentSheet_(ss, 'P50_TECHNICAL', [
@@ -83,13 +92,12 @@ function seedResiArtData_() {
     ['備考', '', 'パンフレット記載の実測値（2026年1月時点データ）', '', '', '', '', '']
   ]));
 
+  // P40_WORKS（施工事例）はResi Art Floor専用：Before/Afterのグリッド（メイン）＋
+  // 完成事例ギャラリーのカルーセルの2行構成。看板・テーブルはP30_SERVICE側の
+  // 各行（メイン＋ギャラリー）に統合したため、ここには含めない。
   results.push(seedContentSheet_(ss, 'P40_WORKS', [
-    ['施工事例（床）', '', '店舗・住宅・ガレージの床施工事例（Before/After）',
-      '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '床施工事例', '', 'grid', ''],
-    ['レジンアート看板', '', 'フルオーダーで制作した看板施工事例',
-      '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '看板施工事例', '', '', ''],
-    ['レジンアートテーブル', '', '世界に一つだけのアートテーブル施工事例',
-      '1S1z4_XaC_dczGTQS8BP4j8GteGy75A7S', 'テーブル施工事例', '', '', '']
+    ['Before / After', '', '', '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '', '', 'grid', ''],
+    ['Gallery', '', '', '1pTU0wNfKN_rEjhEM30E2LWJnXYL-7RZ7', '', '', 'carousel', '']
   ]));
 
   results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン', '1SY93X2cpJFdqevmXeixt8SUFq6q9bbjC'));

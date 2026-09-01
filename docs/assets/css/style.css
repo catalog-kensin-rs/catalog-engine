@@ -1,4 +1,8 @@
 :root {
+  /* ページ自体が意図的な暗色配色であることをブラウザに伝える。
+     未宣言だと一部ブラウザの「自動ダークモード補正」が地の文の色をずらし、
+     水色がかって見える原因になるため必須。 */
+  color-scheme: dark;
   --color-bg: #0d0d0f;
   --color-text: #f2efe9;
   --color-muted: #a8a29b;
@@ -62,7 +66,7 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 1rem;
 }
-.header-logo { max-height: 48px; width: auto; }
+.header-logo { height: 32px; width: auto; }
 .header-text h1 { font-size: 1.25rem; margin: 0; }
 
 .catalog-nav {
@@ -124,7 +128,7 @@ h1, h2, h3 { font-family: var(--font-display); }
   background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.1));
 }
 .hero-eyebrow { font-family: var(--font-jp-label); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; opacity: 0.85; margin: 0 0 0.5rem; }
-.hero-logo { max-width: 320px; width: 60%; margin: 0 0 0.75rem; }
+.hero-logo { height: clamp(3rem, 7vw, 5.5rem); width: auto; max-width: 100%; margin: 0 0 0.75rem; }
 .hero-title { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.6rem); margin: 0 0 0.5rem; }
 .hero-subtitle { font-size: 1.1rem; margin: 0 0 0.75rem; opacity: 0.9; }
 .hero-body { max-width: 40rem; opacity: 0.9; }
@@ -202,6 +206,7 @@ h1, h2, h3 { font-family: var(--font-display); }
 .specs-table { width: 100%; border-collapse: collapse; }
 .specs-table th, .specs-table td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--color-border); vertical-align: top; }
 .specs-table th { width: 9rem; color: var(--color-muted); font-weight: 600; }
+.specs-table a { color: var(--color-accent); }
 
 .company-block { display: flex; flex-direction: column; gap: 1rem; }
 .company-logo img { max-height: 80px; width: auto; }
@@ -210,6 +215,7 @@ h1, h2, h3 { font-family: var(--font-display); }
 /* video */
 .video-embed { position: relative; padding-top: 56.25%; margin: 0.75rem 0; }
 .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 8px; }
+.video-link a { color: var(--color-accent); }
 
 /* contact */
 .contact-block { background: var(--color-surface); border-radius: 10px; padding: 1.5rem; }
@@ -267,4 +273,49 @@ h1, h2, h3 { font-family: var(--font-display); }
   }
   .gallery-tile img { transition: none !important; }
   .catalog-header { transition: none !important; }
+  .lightbox-overlay { transition: none !important; }
 }
+
+/* ライトボックス：施工写真等のクリック／タップ拡大表示 */
+.catalog-main img { cursor: zoom-in; }
+.catalog-main .hero-logo,
+.catalog-main .company-logo img { cursor: default; }
+
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+.lightbox-overlay[hidden] { display: none; }
+.lightbox-overlay.is-open { opacity: 1; }
+.lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: default;
+}
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.lightbox-close:hover { background: rgba(255, 255, 255, 0.22); }
