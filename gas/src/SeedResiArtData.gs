@@ -57,7 +57,7 @@ function seedResiArtData_() {
   results.push(seedContentSheet_(ss, 'P30_SERVICE', [
     ['Resi Art Floor（レジンアートフロア）', '',
       '店舗・住宅・ガレージなど空間の雰囲気を大きく変えるオーダーデザインのレジンフロア。床だけの一部リフォームから空間づくりまで対応。\n施工フロー：①ヒアリング→②デザイン提案→③施工→④お引き渡し',
-      '', '', '', '', ''],
+      '1sTp76AimT7D1zN0toenm8pMC5KVYthb_', '', '', '', ''],
     ['Resi Art Sign（レジアート看板）', '',
       'レジンで創る唯一無二の看板。フルオーダーでサロン・オフィス等の空間に合わせて制作',
       '1jt8tQjXTrkGVVLafY3nItUATSkOQ6OZ4', '', '', '', ''],
