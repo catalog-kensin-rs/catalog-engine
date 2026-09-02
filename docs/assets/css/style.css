@@ -110,9 +110,9 @@ img { max-width: 100%; display: block; }
 
 h1, h2, h3 { font-family: var(--font-display); }
 
-/* hero */
+/* hero：情報はロゴ＋キャッチコピー＋英字タグラインのみに絞る。写真の余白を活かして配置する */
 .hero-block {
-  min-height: 60vh;
+  min-height: 85vh;
   background-size: cover;
   background-position: center;
   display: flex;
@@ -124,14 +124,26 @@ h1, h2, h3 { font-family: var(--font-display); }
 }
 .hero-overlay {
   width: 100%;
-  padding: 2.5rem 1.5rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.1));
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 3rem);
+  background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.15));
 }
-.hero-eyebrow { font-family: var(--font-jp-label); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; opacity: 0.85; margin: 0 0 0.5rem; }
-.hero-logo { height: clamp(3rem, 7vw, 5.5rem); width: auto; max-width: 100%; margin: 0 0 0.75rem; }
+.hero-eyebrow { font-family: var(--font-jp-label); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; opacity: 0.85; margin: 0 0 0.75rem; }
+.hero-logo { width: clamp(220px, 35vw, 480px); height: auto; max-width: 90%; margin: 0 0 1.5rem; }
 .hero-title { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.6rem); margin: 0 0 0.5rem; }
-.hero-subtitle { font-size: 1.1rem; margin: 0 0 0.75rem; opacity: 0.9; }
-.hero-body { max-width: 40rem; opacity: 0.9; }
+.hero-catchcopy {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  line-height: 1.35;
+  margin: 0 0 0.9rem;
+}
+.hero-tagline {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  color: var(--color-muted);
+  margin: 0;
+}
 
 /* text */
 .text-block + .text-block { margin-top: 1.5rem; }
@@ -257,7 +269,8 @@ h1, h2, h3 { font-family: var(--font-display); }
 
 @media (max-width: 720px) {
   .catalog-main { padding: 0 1rem; }
-  .hero-block { margin: 0 -1rem; border-radius: 0; min-height: 50vh; }
+  .hero-block { margin: 0 -1rem; border-radius: 0; min-height: 75vh; }
+  .hero-logo { width: clamp(180px, 45vw, 320px); }
   .image-text-row, .image-text-row.reversed { flex-direction: column; }
   .before-after-row { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: 1fr; gap: 1.25rem; }

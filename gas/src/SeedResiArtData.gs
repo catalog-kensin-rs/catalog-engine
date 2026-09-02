@@ -26,10 +26,12 @@ function seedResiArtData_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var results = [];
 
+  // heroは情報を絞る方針のため、本文（説明文）はテンプレート側で表示しない
+  // （データ自体は残しておく）。キャプション列は英字タグライン表示に流用する。
   results.push(seedContentSheet_(ss, 'P10_CONCEPT', [
     ['Resi Art', '床が変われば、空間が変わる。',
       '職人の手仕事が生み出す、世界に一つだけのオーダーメイドフロア。国内外で高い評価を受けるレジンアートで、空間そのものの価値を変えます。',
-      '1sun3XCevGJQsbK87nX0Uyqqj29byYGDa', '', '', 'full', '']
+      '1sun3XCevGJQsbK87nX0Uyqqj29byYGDa', 'REDEFINE THE FLOOR, REDEFINE THE SPACE.', '', 'full', '']
   ]));
 
   // 4項目とも同じFeaturesフォルダを参照する。フォルダ内は「01_◯◯.jpg」〜「04_◯◯.jpg」の
@@ -100,7 +102,11 @@ function seedResiArtData_() {
     ['Gallery', '', '', '1pTU0wNfKN_rEjhEM30E2LWJnXYL-7RZ7', '', '', 'carousel', '']
   ]));
 
-  var logoFileId = '1SY93X2cpJFdqevmXeixt8SUFq6q9bbjC';
+  // 会社マスターのロゴ列は、黒背景（ヘッダー／hero／会社情報ページ）で使う白文字の透過PNG。
+  // 白背景に載せる場面ができた場合用の黒文字版（1tKVgMmyyQiKJRYd_W1tW2iPa7XZk78a3）は
+  // 現状どこにも使用箇所が無いため未使用のまま（シートの列も1つしかない）。
+  var logoFileId = '1lRHO0xRsHjg36Zf_HaM4opP0KhmbWzii';
+  var logoFileIdForLightBg = '1tKVgMmyyQiKJRYd_W1tW2iPa7XZk78a3'; // 未使用（将来、白背景の箇所ができたら利用）
   results.push(seedCompanyRow_(ss, 'numan', '株式会社トリニティリンク', '529-1443', '滋賀県近江八幡市白鳥町151-1 五番街テナントD', 'レジン施工・空間デザイン', logoFileId));
 
   // Web公開ページ（GitHub Pages＝匿名アクセス）から画像を表示するには、
@@ -119,6 +125,7 @@ function seedResiArtData_() {
   ];
   var sharingNotes = imageFolderIds.map(ensureFolderPubliclyViewable_);
   sharingNotes.push(ensureFilePubliclyViewable_(logoFileId));
+  sharingNotes.push(ensureFilePubliclyViewable_(logoFileIdForLightBg));
   var sharingFailures = sharingNotes.filter(function (n) { return n && !n.ok; });
   results.push({
     name: '画像の公開設定',
