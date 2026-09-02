@@ -69,23 +69,24 @@ function imageTag(url, alt) {
 window.CATALOG_TEMPLATES = {
 
   hero: function (page, catalog, company) {
-    // 情報を絞る：ロゴ＋キャッチコピー＋英字タグラインのみ（補足説明の本文は表示しない）。
+    // パンフレット表紙に準拠したポスター型レイアウト：ロゴ（左上〜中央、大）、
+    // キャッチコピー（縦書き・右寄り）、本文（左下・控えめ）、英字タグライン（最下部・控えめ）。
     // 会社マスターにロゴが設定されている場合は、タイトルのテキストではなくロゴ画像を表示する
     // （商品名テキストの代わりにブランドロゴを見せる、という汎用的な切り替えなので商品固有ロジックにはしていない）。
     // 英字タグラインは既存の「キャプション」列を流用する（新規データ項目を増やさない）。
     var item = (page.items && page.items[0]) || {};
     var bg = item.images && item.images[0] ? item.images[0] : '';
     var style = bg ? ' style="background-image:url(\'' + escapeHtml(bg) + '\')"' : '';
-    var titleHtml = (company && company.logo)
+    var logoHtml = (company && company.logo)
       ? '<img class="hero-logo" src="' + escapeHtml(company.logo) + '" alt="' + escapeHtml(item.title || '') + '">'
       : (item.title ? '<h2 class="hero-title">' + escapeHtml(item.title) + '</h2>' : '');
     var html = '<div class="hero-block"' + style + '>' +
-      '<div class="hero-overlay">' +
-      (page.page_name ? '<p class="hero-eyebrow">' + escapeHtml(page.page_name) + '</p>' : '') +
-      titleHtml +
+      '<div class="hero-scrim"></div>' +
+      logoHtml +
       (item.subtitle ? '<p class="hero-catchcopy">' + escapeHtml(item.subtitle) + '</p>' : '') +
+      (item.body ? '<p class="hero-body">' + nl2br(item.body) + '</p>' : '') +
       (item.caption ? '<p class="hero-tagline">' + escapeHtml(item.caption) + '</p>' : '') +
-      '</div></div>';
+      '</div>';
     return section(page.page_id, page.page_type, html);
   },
 

@@ -13,6 +13,7 @@
   --font-base: 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', system-ui, sans-serif;
   --font-display: 'Playfair Display', 'Times New Roman', serif;
   --font-jp-label: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+  --font-jp-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
   --max-width: 1080px;
 }
 
@@ -110,37 +111,75 @@ img { max-width: 100%; display: block; }
 
 h1, h2, h3 { font-family: var(--font-display); }
 
-/* hero：情報はロゴ＋キャッチコピー＋英字タグラインのみに絞る。写真の余白を活かして配置する */
+/* hero：パンフレット表紙に準拠したポスター型レイアウト（ロゴ大／キャッチコピー縦書き／本文・タグラインは控えめ） */
 .hero-block {
-  min-height: 85vh;
+  position: relative;
+  min-height: clamp(90vh, 95vh, 100vh);
   background-size: cover;
   background-position: center;
-  display: flex;
-  align-items: flex-end;
   border-radius: 12px;
   overflow: hidden;
   color: #fff;
   margin: 0 -1.25rem;
 }
-.hero-overlay {
-  width: 100%;
-  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 5vw, 3rem);
-  background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.15));
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.32) 45%, rgba(0,0,0,0.6) 100%);
+  z-index: 1;
 }
-.hero-eyebrow { font-family: var(--font-jp-label); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem; opacity: 0.85; margin: 0 0 0.75rem; }
-.hero-logo { width: clamp(220px, 35vw, 480px); height: auto; max-width: 90%; margin: 0 0 1.5rem; }
-.hero-title { font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.6rem); margin: 0 0 0.5rem; }
-.hero-catchcopy {
+.hero-logo {
+  position: absolute;
+  top: 9%;
+  left: 5%;
+  z-index: 2;
+  width: clamp(300px, 62vw, 900px);
+  max-width: 88%;
+  height: auto;
+  filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.55));
+}
+.hero-title {
+  position: absolute;
+  top: 9%;
+  left: 5%;
+  z-index: 2;
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2rem, 5.5vw, 3.4rem);
-  line-height: 1.35;
-  margin: 0 0 0.9rem;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  margin: 0;
+}
+.hero-catchcopy {
+  position: absolute;
+  top: 16%;
+  right: clamp(1.5rem, 8vw, 4.5rem);
+  z-index: 2;
+  writing-mode: vertical-rl;
+  font-family: var(--font-jp-serif);
+  font-weight: 600;
+  font-size: clamp(28px, 5vw, 56px);
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  color: #f5f1e8;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+.hero-body {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 3rem);
+  bottom: clamp(3.75rem, 11vh, 5.5rem);
+  z-index: 2;
+  max-width: 26rem;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  opacity: 0.8;
 }
 .hero-tagline {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 3rem);
+  bottom: clamp(1.5rem, 4.5vh, 2.25rem);
+  z-index: 2;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+  font-size: clamp(12px, 1.2vw, 14px);
   color: var(--color-muted);
   margin: 0;
 }
@@ -269,8 +308,11 @@ h1, h2, h3 { font-family: var(--font-display); }
 
 @media (max-width: 720px) {
   .catalog-main { padding: 0 1rem; }
-  .hero-block { margin: 0 -1rem; border-radius: 0; min-height: 75vh; }
-  .hero-logo { width: clamp(180px, 45vw, 320px); }
+  .hero-block { margin: 0 -1rem; border-radius: 0; min-height: clamp(90vh, 95vh, 100vh); }
+  /* 縦書きキャッチコピーがロゴと衝突・はみ出ししないよう、モバイルではロゴを控えめにして
+     キャッチコピーをロゴの下側にずらす */
+  .hero-logo { top: 6%; left: 4%; width: clamp(220px, 72vw, 380px); }
+  .hero-catchcopy { top: 40%; right: 1.1rem; font-size: clamp(20px, 4.2vw, 26px); }
   .image-text-row, .image-text-row.reversed { flex-direction: column; }
   .before-after-row { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: 1fr; gap: 1.25rem; }
